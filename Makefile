@@ -24,11 +24,7 @@ hf-login:
 
 # Push files to Hugging Face Space
 	push-hub:
-	huggingface-cli repo create your-space-name --type space --yes || true
-	huggingface-cli upload ./App/* --Singhvar/Drug_Classification
-	huggingface-cli upload ./Model/* --Singhvar/Drug_Classification
-	huggingface-cli upload ./Results/* --Singhvar/Drug_Classification
-
+		python deploy.py
 
 	
 deploy: hf-login push-hub
