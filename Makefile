@@ -23,14 +23,13 @@ hf-login:
 	huggingface-cli login --token $(HF_TOKEN)
 
 # Push files to Hugging Face Space
-push-hub:
-	@echo "Pushing files to Hugging Face Space..."
-	huggingface-cli repo create your-space-name --type=space --sdk=gradio --yes
-	huggingface-cli upload ./App --repo Singhvar/Drug_Classification --path / --token $(HF_TOKEN)
-	huggingface-cli upload ./Model --repo Singhvar/Drug_Classification --path /Model --token $(HF_TOKEN)
-	huggingface-cli upload ./Results --repo Singhvar/Drug_Classification --path /Results --token $(HF_TOKEN)
+	push-hub:
+	huggingface-cli repo create your-space-name --type space --yes || true
+	huggingface-cli upload ./App/* --Singhvar/Drug_Classification
+	huggingface-cli upload ./Model/* --Singhvar/Drug_Classification
+	huggingface-cli upload ./Results/* --Singhvar/Drug_Classification
 
-# Deployment
-deploy:
-	make hf-login HF_TOKEN=$(HF_TOKEN)
-	make push-hub HF_TOKEN=$(HF_TOKEN)
+
+	
+deploy: hf-login push-hub
+
