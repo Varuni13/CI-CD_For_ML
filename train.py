@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Use the provided csv_path variable for the file path
-csv_path = r"C:\Users\Varuni Singh\CI-CD_For_ML\Data\drug.csv"
+csv_path = "Data/drug.csv"
 drug_df = pd.read_csv(csv_path)
 drug_df = drug_df.sample(frac=1)
 drug_df.head()
