@@ -15,20 +15,23 @@ eval:
 	echo '![Confusion Matrix](./Results/model_results.png)' >> report.md
 	cml comment create report.md
 
-# Login to Hugging Face
+# Login to Hugging Face (Git)
 hf-login:
-	@echo "Logging in to Hugging Face..."
-	pip install -U "huggingface_hub[cli]"
-	huggingface-cli login --token $(HF_TOKEN)
+	@echo "Setting up Hugging Face authentication..."
+	git config --global user.email "varunisingh131096@gmail.com"
+	git config --global user.name "Varuni13"
 
-# Push files to Hugging Face Space
+# Push files to Hugging Face Space using Git
 push-hub:
-	@echo "Pushing files to Hugging Face Space..."
-	huggingface-cli repo create Singhvar/Drug_Classification --repo-type=space --space-sdk=gradio || true
-	huggingface-cli upload ./app.py --repo-id Singhvar/Drug_Classification --repo-type=space
-	huggingface-cli upload ./requirements.txt --repo-id Singhvar/Drug_Classification --repo-type=space
-	huggingface-cli upload ./Model --repo-id Singhvar/Drug_Classification --repo-type=space
-	huggingface-cli upload ./Results --repo-id Singhvar/Drug_Classification --repo-type=space
+	@echo "Cloning Hugging Face Space repository..."
+	rm -rf Drug_Classification || true
+	git clone https://huggingface.co/spaces/Singhvar/Drug_Classification
+	cp app.py Drug_Classification/
+	cp requirements.txt Drug_Classification/
+	cp -r Model Drug_Classification/
+	cp -r Results Drug_Classification/
+	cd Drug_Classification && git add . && git commit -m "Update Space files" || true
+	cd Drug_Classification && git push
 
 # Deploy the app
 deploy: hf-login push-hub
