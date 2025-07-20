@@ -14,15 +14,40 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install cml  # for commenting results
+
       - name: Train Model
         run: python train.py
+
       - name: Evaluation
         run: python run_pipeline.py
+
+      # Post metrics & confusion matrix as comment
+      - name: Post Metrics to GitHub
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cml comment create --publish --md report.md
+
+      # Commit and push Results/ and Model/ to 'update' branch
+      - name: Commit and Push Results
+        if: success()
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b update || git checkout update
+          git add Results/ Model/
+          git commit -m "Update model and results [skip ci]" || echo "No changes to commit"
+          git push origin update || echo "Branch push failed"
