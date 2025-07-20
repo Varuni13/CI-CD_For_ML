@@ -1,0 +1,23 @@
+name: Continuous Deployment
+
+on:
+  workflow_run:
+    workflows: ["Continuous Integration"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install Hugging Face CLI
+        run: pip install huggingface_hub
+      - name: Deploy to Hugging Face
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: make deploy HF_TOKEN=${{ secrets.HF_TOKEN }}
